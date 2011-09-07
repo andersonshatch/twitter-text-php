@@ -371,7 +371,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return  string  The tweet element with a link applied.
    */
-  protected function wrap($url, $class, $element) {
+  protected function wrap($url, $class, $element, $addTitle) {
     $link  = '<a';
     if ($class) $link .= ' class="'.$class.'"';
     $link .= ' href="'.$url.'"';
@@ -380,8 +380,8 @@ class Twitter_Autolink extends Twitter_Regex {
     if ($this->nofollow) $rel[] = 'nofollow';
     if (!empty($rel)) $link .= ' rel="'.implode(' ', $rel).'"';
     if ($this->target) $link .= ' target="'.$this->target.'"';
-    $link .= ' title="'.$url.'"';
-    $link .= '>'.$element.'</a>';
+    if ($addTitle) $link .= ' title="'.$url.'"';
+    $link .= '>'.str_replace('http://', '', $element).'</a>';
     return $link;
   }
 
@@ -415,7 +415,7 @@ class Twitter_Autolink extends Twitter_Regex {
     list($all, $before, $url, $protocol, $domain, $path, $query) = array_pad($matches, 7, '');
     $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8', false);
     if (!$protocol) return $all;
-    return $before . $this->wrap($url, $this->class_url, $url);
+    return $before . $this->wrap($url, $this->class_url, $url, true);
   }
 
   /**
